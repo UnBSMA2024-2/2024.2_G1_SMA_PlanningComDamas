@@ -9,6 +9,20 @@ JADE_FLAGS 		 = -gui -agents "$(JADE_AGENTS)"
 .PHONY:
 	clean
 	build-and-run
+	build
+	build-libs
+	build-maven
+	run
+	build-and-run-win
+	build-win
+	install-jade
+	install-commons
+	install-examples-jade
+	test-jade
+
+test-jade:
+	@echo "Testando a instalação do Jade"
+	java -cp $(PROJECT_CLASS_PATH) jade.Boot -gui
 
 build-and-run:
 	@echo "Gerando a build e executando o projeto"
