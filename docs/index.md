@@ -10,7 +10,7 @@ Para mais informações consulte: [Documentação do projeto](https://ciro-c.git
 #### Requisitos 
  Para aplicação é necessário `JAVA >= 11`
 
- **Opcional** Para documentos é necessário `docker compose` ou [nodejs](https://nodejs.org/)
+ **Opcional** Para documentos é necessário `docker compose` ou [Python](https://python.org/)
 
 #### Rodando a aplicação
   Todos commandos aplicação se encontram no arquivo `makefile`;
