@@ -279,7 +279,7 @@ public class BoardPanel extends JPanel
 	 */
 	public static void main(String[] args)
 	{
-		Board b = new Board(5);
+		Board b = new Board(8);
 		BoardPanel bp = new BoardPanel(b);
 		bp.addActionListener(new ActionListener()
 		{

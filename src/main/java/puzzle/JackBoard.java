@@ -121,7 +121,7 @@ public class JackBoard implements IBoard, Serializable
 	 */
 	public int getSize()
 	{
-		return 5;
+		return 8;
 	}
 
 	/**
@@ -130,9 +130,9 @@ public class JackBoard implements IBoard, Serializable
 	public List<Piece> getCurrentPosition()
 	{
 		List<Piece> ret = new ArrayList<Piece>();
-		for(int y=0; y<5; y++)
+		for(int y=0; y<8; y++)
 		{
-			for(int x=0; x<5; x++)
+			for(int x=0; x<8; x++)
 			{
 				ret.add(getPiece(new Position(x, y)));
 			}
@@ -157,36 +157,16 @@ public class JackBoard implements IBoard, Serializable
 	 * distinguish pieces individually in this representation.
 	 */
 	int[][] board = {
-		{
-			1,
-			1,
-			1,
-			4,
-			4},
-		{
-			1,
-			1,
-			1,
-			4,
-			4},
-		{
-			1,
-			1,
-			0,
-			-1,
-			-1},
-		{
-			4,
-			4,
-			-1,
-			-1,
-			-1},
-		{
-			4,
-			4,
-			-1,
-			-1,
-			-1}};
+	    {  0, -1,  0,  0,  0,  1,  0,  1},
+	    { -1,  0, -1,  0,  0,  0,  1,  0},
+	    {  0, -1,  0,  0,  0,  1,  0,  1},
+	    { -1,  0, -1,  0,  0,  0,  1,  0},
+	    {  0, -1,  0,  0,  0,  1,  0,  1},
+	    { -1,  0, -1,  0,  0,  0,  1,  0},
+	    {  0, -1,  0,  0,  0,  1,  0,  1},
+	    { -1,  0, -1,  0,  0,  0,  1,  0}
+	};
+	
 	int last = 4;
 	Position the_hole = new Position(2, 2);
 	/**
@@ -276,7 +256,7 @@ public class JackBoard implements IBoard, Serializable
 
 	int get(int x, int y)
 	{
-		if(((((x<0) || (x>= 5)) || (y<0)) || (y>= 5)))
+		if(((((x<0) || (x>= 8)) || (y<0)) || (y>= 8)))
 			return 4;
 		return board[x][y];
 	}

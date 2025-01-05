@@ -40,7 +40,7 @@ public class Board implements IBoard, Serializable
 	 */
 	public Board()
 	{
-		this(5);
+		this(8);
 	}
 
 	/**
@@ -366,7 +366,7 @@ public class Board implements IBoard, Serializable
 	 */
 	public static void main(String[] args)
 	{
-		Board board = new Board(5);
+		Board board = new Board(8);
 		//System.out.println(board);
 		List<Move> moves = board.getPossibleMoves();
 		System.out.println(moves);
