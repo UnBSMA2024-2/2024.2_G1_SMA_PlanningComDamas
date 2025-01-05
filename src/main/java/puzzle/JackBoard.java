@@ -178,50 +178,15 @@ public class JackBoard implements IBoard, Serializable
 	 */
 	// x, y, piece_col
 	static int[][] move_check_table = {
-		{
-			1,
-			0,
-			-1},
-		{
-			0,
-			1,
-			-1},
-		{
-			-1,
-			0,
-			1},
-		{
-			0,
-			-1,
-			1},
-		{
-			2,
-			0,
-			-1,
-			1,
-			0,
-			1},
-		{
-			0,
-			2,
-			-1,
-			0,
-			1,
-			1},
-		{
-			-2,
-			0,
-			1,
-			-1,
-			0,
-			-1},
-		{
-			0,
-			-2,
-			1,
-			0,
-			-1,
-			-1}};
+		{  0, -1,  0,  0,  0,  1,  0,  1},
+		{ -1,  0, -1,  0,  0,  0,  1,  0},
+		{  0, -1,  0,  0,  0,  1,  0,  1},
+		{ -1,  0, -1,  0,  0,  0,  1,  0},
+		{  0, -1,  0,  0,  0,  1,  0,  1},
+		{ -1,  0, -1,  0,  0,  0,  1,  0},
+		{  0, -1,  0,  0,  0,  1,  0,  1},
+		{ -1,  0, -1,  0,  0,  0,  1,  0}
+	};
 
 	/**
 	 * The moves() method computes possible moves to <x:y>,
@@ -278,14 +243,19 @@ public class JackBoard implements IBoard, Serializable
 
 	boolean solution()
 	{
-		if((board[2][2]!=0))
-			return false;
-		for(int i = 0; (i<3); i++)
+		int onlyPiecesOf = 0; // 0: none, 1: white, -1: black 
+		for(int i = 0; (i<board.length); i++)
 		{
-			for(int j = 0; (j<3); j++)
+			for(int j = 0; (j<board[i].length); j++)
 			{
-				if((board[i][j]>0))
-					return false;
+				if((board[i][j]!=0)){
+					if((onlyPiecesOf==0)){
+						onlyPiecesOf = board[i][j];
+					}
+					else if((onlyPiecesOf!=board[i][j])){
+						return false;
+					}
+				}
 			}
 		}
 		return true;
