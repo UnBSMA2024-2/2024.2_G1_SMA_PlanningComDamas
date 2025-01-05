@@ -178,14 +178,14 @@ public class JackBoard implements IBoard, Serializable
 	 */
 	// x, y, piece_col
 	static int[][] move_check_table = {
-		{  0, -1,  0,  0,  0,  1,  0,  1},
-		{ -1,  0, -1,  0,  0,  0,  1,  0},
-		{  0, -1,  0,  0,  0,  1,  0,  1},
-		{ -1,  0, -1,  0,  0,  0,  1,  0},
-		{  0, -1,  0,  0,  0,  1,  0,  1},
-		{ -1,  0, -1,  0,  0,  0,  1,  0},
-		{  0, -1,  0,  0,  0,  1,  0,  1},
-		{ -1,  0, -1,  0,  0,  0,  1,  0}
+		{ 1, 1, 0},
+		{ -1, -1, 0},
+		{ -1, 1, 0},
+		{ 1, -1, 0},
+		{ 2, 2, 0, 1, 1 },
+		{ -2, 2, 0, -1, 1 },
+		{ -2, -2, 0, -1, -1 },
+		{ 2, -2, 0, 1, -1 },
 	};
 
 	/**
@@ -196,8 +196,7 @@ public class JackBoard implements IBoard, Serializable
 	{
 		List<Position> v = new ArrayList<Position>();
 		for(int i = 0; (i<move_check_table.length); i++)
-			check(v, move_check_table[i], x, y)
-					;
+			check(v, move_check_table[i], x, y);
 		return v;
 	}
 
@@ -209,9 +208,10 @@ public class JackBoard implements IBoard, Serializable
 	{
 		int x1 = (x+m[0]);
 		int y1 = (y+m[1]);
+		int piece = get(x,y);
 		if((get(x1, y1)==m[2]))
 		{
-			if(((m.length==3) || (get((x+m[3]), (y+m[4]))==m[5])))
+			if(((m.length==3) || (get((x+m[3]), (y+m[4])) != piece)))
 			{
 				Position s = new Position(x1, y1);
 				v.add(s);
