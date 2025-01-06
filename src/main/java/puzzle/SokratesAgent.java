@@ -1,5 +1,7 @@
 package puzzle;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -158,7 +160,7 @@ public class SokratesAgent
 			// if (moves.size() > 0) {
 			// 	ret.add(new MovePlan(moves.get(0)));
 			// }
-		
+
 			return ret;
 		}
 	}
@@ -207,8 +209,10 @@ public class SokratesAgent
 			triescnt++;
 			print("Trying "+move+" ("+triescnt+") ", depth);
 			depth++;
-			board.move(move);
-					
+			boolean success = board.move(move);
+			if (!success) {
+				fail();
+			}
 			if(delay>0)
 			{
 				plan.waitFor(delay)

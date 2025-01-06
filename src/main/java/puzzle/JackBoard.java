@@ -109,7 +109,12 @@ public class JackBoard implements IBoard, Serializable
 	public boolean move(Move move)
 	{
 		// todo: check?
+
 		int p = get(move.getStart());
+		int f = get(move.getEnd());
+		if (f != 0) {
+			return false;
+		}
 		set(0, move.getStart()); // deixando um buraco no movimento inicial
 		if (move.isJumpMove()) {
 			for(Position captured: move.getCaptured()) {
@@ -119,8 +124,8 @@ public class JackBoard implements IBoard, Serializable
 		// the_hole = move.getStart();
 		set(p, move.getEnd());
 		// moves.add(move);
-		// pcs.firePropertyChange("solution", null, move);
-		pcs.firePropertyChange(IBoard.MOVE, null, move);
+		pcs.firePropertyChange("solution", null, move);
+		// pcs.firePropertyChange(IBoard.MOVE, null, move);
 		isWhiteTurn = !isWhiteTurn;
 		return true;
 	}
@@ -130,16 +135,16 @@ public class JackBoard implements IBoard, Serializable
 	 */
 	public boolean takeback()
 	{
-		if(moves.size()==0)
-			return false;
+		// if(moves.size()==0)
+		// 	return false;
 
-		Move move = (Move)moves.get(moves.size()-1);
-		int p = get(move.getEnd());
-		set(p, move.getStart());
-		set(0, move.getEnd());
-		the_hole = move.getEnd();
-		moves.remove(moves.size()-1);
-		pcs.firePropertyChange("solution", null, move);
+		// Move move = (Move)moves.get(moves.size()-1);
+		// int p = get(move.getEnd());
+		// set(p, move.getStart());
+		// set(0, move.getEnd());
+		// the_hole = move.getEnd();
+		// moves.remove(moves.size()-1);
+		// pcs.firePropertyChange("solution", null, move);
 //		pcs.firePropertyChange(IBoard.TAKEBACK, null, move);
 		return true;
 	}
@@ -215,7 +220,7 @@ public class JackBoard implements IBoard, Serializable
 	}
 
 	/**
-	 * The int [][] board represents the game board, with 0 marking
+	 * The int [x][y] board represents the game board, with 0 marking
 	 * the hole, and 4 marking out-of-limit coordinates. Otherwise
 	 * there are "1" pieces and "-1" pieces. Note that we don't
 	 * distinguish pieces individually in this representation.
@@ -252,6 +257,21 @@ public class JackBoard implements IBoard, Serializable
 		{ -2, -2, 0, -1, -1 }
 	};
 
+	// y, x, piece_col
+	static int[][] move_check_table_white = {
+		{ 1, -1, 0},
+		{ -1, -1, 0},
+		{ 2, -2, 0, 1, -1 },
+		{ -2, -2, 0, -1, -1 }
+	};
+
+	static int[][] move_check_table_black = {
+		{ -1, 1, 0},
+		{ 1, -1, 0},
+		// { -2, 2, 0, -1, 1 },
+		// { 2, 2, 0, 1, 1 },/
+	};
+
 	/**
 	 * The moves() method computes possible moves to <x:y>,
 	 * represented by the Positiones of pieces to move.
@@ -260,17 +280,10 @@ public class JackBoard implements IBoard, Serializable
 	{
 		List<List<Position>> captures = new ArrayList();
 		List<Position> v = new ArrayList<Position>();
-		for(int i = 0; (i<move_check_table.length); i++){
-
-			if (playerColorPiece == 1 && (i == 0 || i == 2 || i == 4 || i == 6)) {
-				continue;
-			}
-			if (playerColorPiece == -1 && (i == 1 || i == 3 || i == 5 || i == 7)) {
-				continue;
-			}
-
-			boolean valid = check(v, move_check_table[i], x, y);
-			if (valid && (i == 4 || i == 5 || i == 6 || i == 7)) {
+		int[][] check_table = playerColorPiece == 1 ? move_check_table_white : move_check_table_black;
+		for(int i = 0; (i<check_table.length); i++){
+			boolean valid = check(v, check_table[i], x, y);
+			if (valid && (i == 2 || i == 3 )) {
 				List<Position> tempList = new ArrayList<>();
 				tempList.add(new Position(x, y));
 				captures.add(tempList);
@@ -289,12 +302,16 @@ public class JackBoard implements IBoard, Serializable
 		int x1 = (x+m[0]);
 		int y1 = (y+m[1]);
 		int piece = get(x,y);
+
+		// System.out.println("Current piece: " + piece +" x: " + x + " y: " + y +"\n"+"x1: " + x1 + " y1: " + y1+" Future space piece: " + get(x1, y1));
+
 		if((get(x1, y1)==m[2]))
 		{
 			if(((m.length==3) || (get((x+m[3]), (y+m[4])) != piece)))
 			{
 				Position s = new Position(x1, y1);
 				v.add(s);
+				// System.out.println("Adding position: " + s);
 				return true;
 			}
 		}

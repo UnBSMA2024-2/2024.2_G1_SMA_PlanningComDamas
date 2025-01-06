@@ -23,5 +23,10 @@ public class Main
 		CreationInfo ci2 = new CreationInfo().setFilename("puzzle/SokratesAgent.class");
 		platform.createComponent(ci).get();
 		platform.createComponent(ci2).get();
+		// try {
+		// 	platform.wait(200);
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// }
 	}
 }

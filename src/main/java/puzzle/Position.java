@@ -90,6 +90,7 @@ public class Position	implements	Serializable
 	 *  Calculate the hash code.
 	 *  @return The hash code.
 	 */
+	@Override
 	public int hashCode()
 	{
 		return y<<16+x;
