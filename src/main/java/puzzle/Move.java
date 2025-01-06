@@ -1,9 +1,11 @@
 package puzzle;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
- *  A move consisting of a start and an end point.
+ *  A move consisting of a start and an end point, possibly capturing pieces.
  */
 public class Move	implements Serializable
 {
@@ -15,16 +17,29 @@ public class Move	implements Serializable
 	/** The end position. */
 	protected Position end;
 
+    /** The list of captured positions (if any). */
+    protected List<Position> captured;
+
 	//-------- constructors --------
 
 	/**
-	 *  Create a position.
+	 *  Create a move (no captures).
 	 */
 	public Move(Position start, Position end)
 	{
 		this.start = start;
 		this.end = end;
+        this.captured = new ArrayList<>();
 	}
+
+	/**
+     *  Create a move with start, end, and captured positions (for multiple captures).
+     */
+    public Move(Position start, Position end, List<Position> captured) {
+        this.start = start;
+        this.end = end;
+        this.captured = captured;
+    }
 
 	//-------- methods --------
 
@@ -45,15 +60,23 @@ public class Move	implements Serializable
 	}
 
 	/**
+     *  Get the list of captured positions (if any).
+     */
+    public List<Position> getCaptured() {
+        return captured;
+    }
+
+	/**
 	 *  Test if it is a jump move.
 	 */
 	public boolean isJumpMove()
 	{
-		return Math.abs(start.getX()-end.getX())==2 || Math.abs(start.getY()-end.getY())==2;
+		// Check if this move has any captures
+		return !captured.isEmpty();
 	}
 
 	/**
-	 *  Test if two positions are equal.
+	 *  Test if two positions are equal (start and end of a move).
 	 *  @return True, if equal.
 	 */
 	public boolean equals(Object o)
@@ -84,6 +107,11 @@ public class Move	implements Serializable
 	 */
 	public String toString()
 	{
-		return getStart()+" "+getEnd();
+        if (isJumpMove()) {
+            String capturedPositions = captured.toString();
+            return "Jump from " + start + " to " + end + " capturing " + capturedPositions;
+        } else {
+            return "Move from " + start + " to " + end;
+        }
 	}
 }

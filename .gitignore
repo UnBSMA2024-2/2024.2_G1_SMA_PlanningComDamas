@@ -142,3 +142,7 @@ gradle-app.setting
 # Docs specific
 venv/
 site/
+
+# Others
+jcc.settings.json
+platform_auto.conf
