@@ -3,6 +3,7 @@ package puzzle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.SwingUtilities;
 
@@ -57,7 +58,7 @@ public class SokratesAgent
 	protected int	depth;
 	
 	/** The delay between two moves (in milliseconds). */
-	protected long	delay	= 500;
+	protected long delay	= 1000;
 	
 	/** The strategy (none=choose the first applicable, long=prefer jump moves,
 	 * same_long=prefer long moves of same color, alter_long=prefer long move of alternate color). */
@@ -77,12 +78,14 @@ public class SokratesAgent
 		final Future<Void>	ret	= new Future<Void>();
 		this.playerColorPiece = board.getPlayerColorPiece();
 		strategy = agent.getConfiguration();
-		System.out.println("strategy is: "+strategy);
+		print("strategy is: "+strategy);
+		// Random rand = new Random();
+		// this.delay = delay + rand.nextInt(300);
 		if (this.playerColorPiece == 1) {
 			createGui(agent);
 		}
-		
-		System.out.println("Now puzzling:");
+
+		print("Now puzzling:");
 		final long	start	= System.currentTimeMillis();
 		IFuture<MoveGoal> fut = agent.getFeature(IBDIAgentFeature.class).dispatchTopLevelGoal(new MoveGoal());
 		fut.addResultListener(new IResultListener<MoveGoal>()
@@ -144,8 +147,7 @@ public class SokratesAgent
 		{
 			List<MovePlan>	ret	= new ArrayList<MovePlan>();
 			List<Move>	moves	= board.getPossibleMoves(playerColorPiece);
-			System.out.println("My color"+playerColorPiece);
-			System.out.println("Possible moves: "+moves);
+			print("Possible moves: "+moves);
 			Collections.sort(moves, new MoveComparator(board, strategy));
 			
 			for(Move move: moves)
@@ -193,13 +195,13 @@ public class SokratesAgent
 		public IFuture<Void>	move(final IPlan plan)
 		{
 			final Future<Void>	ret	= new Future<Void>();
-			System.out.println("Move");
 			boolean whileLoop = true;
 			while (whileLoop) {
 				if ((board.isWhitePlayerTurn() && playerColorPiece == 1) ||
 				(!board.isWhitePlayerTurn() && playerColorPiece != 1)) {
 					whileLoop = false;
 				}
+					print("outside while loop: " + playerColorPiece + " isWhitePlayerTurn: " + board.isWhitePlayerTurn(),0);
 			}
 
 			triescnt++;
@@ -246,6 +248,7 @@ public class SokratesAgent
 		@PlanFailed
 		public IFuture<Void> failed(IPlan plan)
 		{
+			print("Failed");
 			assert board.getLastMove().equals(move): "Tries to takeback wrong move.";
 			
 			Future<Void>	ret	= new Future<Void>();
@@ -286,6 +289,11 @@ public class SokratesAgent
     {
         for(int x=0; x<indent; x++)
             System.out.print(" ");
-        System.out.println(text);
+        System.out.println(playerColorPiece+" "+text);
     }
+
+	protected void print(String text)
+		{
+			print(text, 0);
+		}
 }

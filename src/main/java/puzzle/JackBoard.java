@@ -86,8 +86,14 @@ public class JackBoard implements IBoard, Serializable
 			for(int x=0; x<8; x++)
 			{
 				if(get(x,y)!=0 && get(x,y)!=4 && (playerColorPiece == -5 || get(x,y)==playerColorPiece)) {
-					for(int j = 0; j<moves(x, y,playerColorPiece).size(); j++) {
-						ret.add(new Move( new Position(x, y),moves(x, y,playerColorPiece).get(j)));
+
+					List<List<Position>> captures = moves(x, y,playerColorPiece).captures;
+					List<Position> moves = moves(x, y,playerColorPiece).moves;
+					while (captures.size() < moves.size()) {
+						captures.add(new ArrayList<Position>());
+					}
+					for(int j = 0; j<moves.size(); j++) {					
+						ret.add(new Move( new Position(x, y),moves.get(j), captures.get(j)));
 					}
 				}
 			}
@@ -103,14 +109,18 @@ public class JackBoard implements IBoard, Serializable
 	public boolean move(Move move)
 	{
 		// todo: check?
-		System.out.println("qaui no board");
 		int p = get(move.getStart());
-		set(0, move.getStart());
-		the_hole = move.getStart();
+		set(0, move.getStart()); // deixando um buraco no movimento inicial
+		if (move.isJumpMove()) {
+			for(Position captured: move.getCaptured()) {
+				set(0, captured);
+			}
+		}
+		// the_hole = move.getStart();
 		set(p, move.getEnd());
-		moves.add(move);
-		pcs.firePropertyChange("solution", null, move);
-//		pcs.firePropertyChange(IBoard.MOVE, null, move);
+		// moves.add(move);
+		// pcs.firePropertyChange("solution", null, move);
+		pcs.firePropertyChange(IBoard.MOVE, null, move);
 		isWhiteTurn = !isWhiteTurn;
 		return true;
 	}
@@ -234,40 +244,47 @@ public class JackBoard implements IBoard, Serializable
 	static int[][] move_check_table = {
 		{ 1, 1, 0},
 		{ -1, -1, 0},
-		{ -1, 1, 0},
 		{ 1, -1, 0},
-		// { 2, 2, 0, 1, 1 },
-		// { -2, 2, 0, -1, 1 },
-		// { -2, -2, 0, -1, -1 },
-		// { 2, -2, 0, 1, -1 },
+		{ -1, 1, 0},
+		{ 2, 2, 0, 1, 1 },
+		{ -2, 2, 0, -1, 1 },
+		{ 2, -2, 0, 1, -1 },
+		{ -2, -2, 0, -1, -1 }
 	};
 
 	/**
 	 * The moves() method computes possible moves to <x:y>,
 	 * represented by the Positiones of pieces to move.
 	 */
-	List<Position> moves(int x, int y, int playerColorPiece)
+	TmpDTO moves(int x, int y, int playerColorPiece)
 	{
+		List<List<Position>> captures = new ArrayList();
 		List<Position> v = new ArrayList<Position>();
 		for(int i = 0; (i<move_check_table.length); i++){
 
-			if (playerColorPiece != -1 && (i == 0 || i == 2)) {
+			if (playerColorPiece == 1 && (i == 0 || i == 2 || i == 4 || i == 6)) {
 				continue;
 			}
-			if (playerColorPiece != 1 && (i == 1 || i == 3)) {
+			if (playerColorPiece == -1 && (i == 1 || i == 3 || i == 5 || i == 7)) {
 				continue;
 			}
 
-			check(v, move_check_table[i], x, y);
+			boolean valid = check(v, move_check_table[i], x, y);
+			if (valid && (i == 4 || i == 5 || i == 6 || i == 7)) {
+				List<Position> tempList = new ArrayList<>();
+				tempList.add(new Position(x, y));
+				captures.add(tempList);
+			}
 		}
-		return v;
+		return new TmpDTO(captures, v);
+
 	}
 
 	/**
 	 * The check() method processes a move_check_table entry, and adds
 	 * a Position to the Vector when the entry applies.
 	 */
-	void check(List<Position> v, int[] m, int x, int y)
+	boolean check(List<Position> v, int[] m, int x, int y)
 	{
 		int x1 = (x+m[0]);
 		int y1 = (y+m[1]);
@@ -278,8 +295,10 @@ public class JackBoard implements IBoard, Serializable
 			{
 				Position s = new Position(x1, y1);
 				v.add(s);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	int get(int x, int y)
