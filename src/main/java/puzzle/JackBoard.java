@@ -3,6 +3,7 @@ package puzzle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import jadex.commons.SimplePropertyChangeSupport;
 import jadex.commons.beans.PropertyChangeListener;
@@ -38,9 +39,20 @@ public class JackBoard implements IBoard, Serializable
 	public List<Move> getPossibleMoves()
 	{
 		List<Move> ret = new ArrayList<Move>();
-		List<Position> ts = moves(the_hole);
-		for(int i = 0; i<ts.size(); i++)
-			ret.add(new Move(ts.get(i), the_hole));
+		List<List<Position>> allPieces = new ArrayList<>();
+		ArrayList<Position> pieceOldPosition = new ArrayList<Position>();
+		for(int y=0; y<8; y++)
+		{
+			for(int x=0; x<8; x++)
+			{
+				if(get(x,y)!=0 && get(x,y)!=4){
+					for(int j = 0; j<moves(x, y).size(); j++) {
+						ret.add(new Move( new Position(x, y),moves(x, y).get(j)));
+					}
+				}
+			}
+		}
+
 		return ret;
 	}
 
@@ -182,10 +194,10 @@ public class JackBoard implements IBoard, Serializable
 		{ -1, -1, 0},
 		{ -1, 1, 0},
 		{ 1, -1, 0},
-		{ 2, 2, 0, 1, 1 },
-		{ -2, 2, 0, -1, 1 },
-		{ -2, -2, 0, -1, -1 },
-		{ 2, -2, 0, 1, -1 },
+		// { 2, 2, 0, 1, 1 },
+		// { -2, 2, 0, -1, 1 },
+		// { -2, -2, 0, -1, -1 },
+		// { 2, -2, 0, 1, -1 },
 	};
 
 	/**
