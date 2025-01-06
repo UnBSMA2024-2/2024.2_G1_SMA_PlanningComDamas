@@ -60,7 +60,7 @@ public class SokratesAgent
 	protected int	depth;
 	
 	/** The delay between two moves (in milliseconds). */
-	protected long delay	= 1000;
+	protected long delay	= 800;
 	
 	/** The strategy (none=choose the first applicable, long=prefer jump moves,
 	 * same_long=prefer long moves of same color, alter_long=prefer long move of alternate color). */
@@ -82,7 +82,8 @@ public class SokratesAgent
 		strategy = agent.getConfiguration();
 		print("strategy is: "+strategy);
 		Random rand = new Random();
-		this.delay = delay + rand.nextInt(300);
+		this.delay = delay + rand.nextInt(500);
+		print(this.delay + " delay");
 		if (this.playerColorPiece == 1) {
 			createGui(agent);
 		}
@@ -157,10 +158,6 @@ public class SokratesAgent
 				ret.add(new MovePlan(move));
 			}
 
-			// if (moves.size() > 0) {
-			// 	ret.add(new MovePlan(moves.get(0)));
-			// }
-
 			return ret;
 		}
 	}
@@ -197,14 +194,7 @@ public class SokratesAgent
 		public IFuture<Void>	move(final IPlan plan)
 		{
 			final Future<Void>	ret	= new Future<Void>();
-			boolean whileLoop = true;
-			while (whileLoop) {
-				if ((board.isWhitePlayerTurn() && playerColorPiece == 1) ||
-				(!board.isWhitePlayerTurn() && playerColorPiece != 1)) {
-					whileLoop = false;
-				}
-					print("outside while loop: " + playerColorPiece + " isWhitePlayerTurn: " + board.isWhitePlayerTurn(),0);
-			}
+			plan.waitFor(delay>1000?2000:delay);
 
 			triescnt++;
 			print("Trying "+move+" ("+triescnt+") ", depth);
