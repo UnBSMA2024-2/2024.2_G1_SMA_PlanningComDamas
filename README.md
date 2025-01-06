@@ -1,14 +1,16 @@
 # NomeDoProjeto
 
 **Disciplina**: FGA0134 - Sistemas Multiagentes <br>
-**Nro do Grupo (de acordo com a Planilha de Divisão dos Grupos)**: XX<br>
-**Frente de Pesquisa**: XXXXXXXXXX<br>
+**Nro do Grupo (de acordo com a Planilha de Divisão dos Grupos)**: 1<br>
+**Frente de Pesquisa**: Planning<br>
 
 ## Alunos
 |Matrícula | Aluno |
 | -- | -- |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
+| 19/0011911  |  Ciro Costa de Araújo |
+| 19/0112123 | Lucas Gabriel Sousa Camargo Paiva |
+| 19/0033088 | Lucas Braun Vieira Xavier |
+| 21/1062437 | RAQUEL FERREIRA ANDRADE |
 
 ## Sobre 
 Descreva o seu projeto em linhas gerais. 
