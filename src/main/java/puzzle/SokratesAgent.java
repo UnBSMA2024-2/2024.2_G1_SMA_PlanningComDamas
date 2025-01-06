@@ -81,8 +81,8 @@ public class SokratesAgent
 		this.playerColorPiece = board.getPlayerColorPiece();
 		strategy = agent.getConfiguration();
 		print("strategy is: "+strategy);
-		// Random rand = new Random();
-		// this.delay = delay + rand.nextInt(300);
+		Random rand = new Random();
+		this.delay = delay + rand.nextInt(300);
 		if (this.playerColorPiece == 1) {
 			createGui(agent);
 		}

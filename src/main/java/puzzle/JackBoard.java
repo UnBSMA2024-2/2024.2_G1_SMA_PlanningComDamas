@@ -118,7 +118,8 @@ public class JackBoard implements IBoard, Serializable
 		set(0, move.getStart()); // deixando um buraco no movimento inicial
 		if (move.isJumpMove()) {
 			for(Position captured: move.getCaptured()) {
-				set(0, captured);
+				// set(0, captured);
+				board[captured.x][captured.y] = 0;
 			}
 		}
 		// the_hole = move.getStart();
@@ -245,17 +246,6 @@ public class JackBoard implements IBoard, Serializable
 	 * a "-1" piece in <x+2,y> if there also is a "1" piece in
 	 * <x+1:y>.
 	 */
-	// x, y, piece_col
-	static int[][] move_check_table = {
-		{ 1, 1, 0},
-		{ -1, -1, 0},
-		{ 1, -1, 0},
-		{ -1, 1, 0},
-		{ 2, 2, 0, 1, 1 },
-		{ -2, 2, 0, -1, 1 },
-		{ 2, -2, 0, 1, -1 },
-		{ -2, -2, 0, -1, -1 }
-	};
 
 	// y, x, piece_col
 	static int[][] move_check_table_white = {
@@ -267,9 +257,9 @@ public class JackBoard implements IBoard, Serializable
 
 	static int[][] move_check_table_black = {
 		{ -1, 1, 0},
-		{ 1, -1, 0},
-		// { -2, 2, 0, -1, 1 },
-		// { 2, 2, 0, 1, 1 },/
+		{ 1, 1, 0},
+		{ -2, 2, 0, -1, 1 },
+		{ 2, 2, 0, 1, 1 },
 	};
 
 	/**
@@ -285,7 +275,7 @@ public class JackBoard implements IBoard, Serializable
 			boolean valid = check(v, check_table[i], x, y);
 			if (valid && (i == 2 || i == 3 )) {
 				List<Position> tempList = new ArrayList<>();
-				tempList.add(new Position(x, y));
+				tempList.add(new Position(x+check_table[i][3], y+check_table[i][4]));
 				captures.add(tempList);
 			}
 		}
