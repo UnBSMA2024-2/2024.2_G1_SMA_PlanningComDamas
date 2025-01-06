@@ -15,10 +15,20 @@ public interface IBoard
 	/** Property event for move taken back. */
 	public static final String TAKEBACK= "takeback";
 
+	public int getPlayerColorPiece();
+
+	public boolean isWhitePlayerTurn();
+
 	/**
 	 *  Get a piece for a location.
 	 */
 	public Piece getPiece(Position pos);
+
+	/**
+	 *  Get possible moves.
+	 *  @return Get all possible move.
+	 */
+	public List<Move> getPossibleMoves(int playerColorPiece);
 
 	/**
 	 *  Get possible moves.

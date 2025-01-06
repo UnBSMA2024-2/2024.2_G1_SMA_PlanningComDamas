@@ -47,7 +47,7 @@ public class SokratesAgent
 	
 	/** The puzzle board. */
 	@Belief
-	protected IBoard	board	= new JackBoard();
+	protected IBoard	board	= JackBoard.getInstance();
 	
 	/** The number of tried moves. */
 	@Belief // needs not to be belief, just used here to test the BDIDebugger
@@ -63,6 +63,8 @@ public class SokratesAgent
 	 * same_long=prefer long moves of same color, alter_long=prefer long move of alternate color). */
 	protected String strategy; // = MoveComparator.STRATEGY_SAME_LONG;
 	
+	protected int playerColorPiece;
+
 	//-------- methods --------
 	
 	/**
@@ -73,10 +75,12 @@ public class SokratesAgent
 	public IFuture<Void>	body(IInternalAccess agent)
 	{
 		final Future<Void>	ret	= new Future<Void>();
-
+		this.playerColorPiece = board.getPlayerColorPiece();
 		strategy = agent.getConfiguration();
 		System.out.println("strategy is: "+strategy);
-		createGui(agent);
+		if (this.playerColorPiece == 1) {
+			createGui(agent);
+		}
 		
 		System.out.println("Now puzzling:");
 		final long	start	= System.currentTimeMillis();
@@ -139,13 +143,19 @@ public class SokratesAgent
 		public List<MovePlan> buildAPL()
 		{
 			List<MovePlan>	ret	= new ArrayList<MovePlan>();
-			List<Move>	moves	= board.getPossibleMoves();
+			List<Move>	moves	= board.getPossibleMoves(playerColorPiece);
+			System.out.println("My color"+playerColorPiece);
+			System.out.println("Possible moves: "+moves);
 			Collections.sort(moves, new MoveComparator(board, strategy));
 			
 			for(Move move: moves)
 			{
 				ret.add(new MovePlan(move));
 			}
+
+			// if (moves.size() > 0) {
+			// 	ret.add(new MovePlan(moves.get(0)));
+			// }
 		
 			return ret;
 		}
@@ -183,7 +193,15 @@ public class SokratesAgent
 		public IFuture<Void>	move(final IPlan plan)
 		{
 			final Future<Void>	ret	= new Future<Void>();
-			
+			System.out.println("Move");
+			boolean whileLoop = true;
+			while (whileLoop) {
+				if ((board.isWhitePlayerTurn() && playerColorPiece == 1) ||
+				(!board.isWhitePlayerTurn() && playerColorPiece != 1)) {
+					whileLoop = false;
+				}
+			}
+
 			triescnt++;
 			print("Trying "+move+" ("+triescnt+") ", depth);
 			depth++;

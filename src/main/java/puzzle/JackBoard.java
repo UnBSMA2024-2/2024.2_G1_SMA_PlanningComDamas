@@ -13,10 +13,42 @@ import jadex.commons.beans.PropertyChangeListener;
  */
 public class JackBoard implements IBoard, Serializable
 {
+  private static volatile JackBoard instance;
+
 	protected Piece white_piece = new Piece(true);
 	protected Piece black_piece = new Piece(false);
 	protected List<Move> moves = new ArrayList<Move>();
 	public SimplePropertyChangeSupport pcs = new SimplePropertyChangeSupport(this);
+
+	private boolean isWhiteTurn = true;
+
+  public static JackBoard getInstance() {
+    JackBoard result = instance;
+    if (result != null) {
+      return result;
+    }
+    synchronized (JackBoard.class) {
+      if (instance == null) {
+        instance = new JackBoard();
+      }
+      return instance;
+    }
+  }
+
+	public int getPlayerColorPiece() {
+		if(isWhiteTurn) {
+			isWhiteTurn = false;
+			return 1;
+		} else {
+			isWhiteTurn = true;
+			return -1;
+		}
+	}
+
+	public boolean isWhitePlayerTurn() {
+			return isWhiteTurn;
+	}
+
 
 	/**
 	 * Get a piece for a location.
@@ -36,7 +68,15 @@ public class JackBoard implements IBoard, Serializable
 	 * Get possible moves.
 	 * @return Get all possible move.
 	 */
-	public List<Move> getPossibleMoves()
+	public List<Move> getPossibleMoves(){
+		return getPossibleMoves(-5);
+	}
+
+	/**
+	 * Get possible moves.
+	 * @return Get all possible move.
+	 */
+	public List<Move> getPossibleMoves(int playerColorPiece)
 	{
 		List<Move> ret = new ArrayList<Move>();
 		List<List<Position>> allPieces = new ArrayList<>();
@@ -45,9 +85,9 @@ public class JackBoard implements IBoard, Serializable
 		{
 			for(int x=0; x<8; x++)
 			{
-				if(get(x,y)!=0 && get(x,y)!=4){
-					for(int j = 0; j<moves(x, y).size(); j++) {
-						ret.add(new Move( new Position(x, y),moves(x, y).get(j)));
+				if(get(x,y)!=0 && get(x,y)!=4 && (playerColorPiece == -5 || get(x,y)==playerColorPiece)) {
+					for(int j = 0; j<moves(x, y,playerColorPiece).size(); j++) {
+						ret.add(new Move( new Position(x, y),moves(x, y,playerColorPiece).get(j)));
 					}
 				}
 			}
@@ -63,6 +103,7 @@ public class JackBoard implements IBoard, Serializable
 	public boolean move(Move move)
 	{
 		// todo: check?
+		System.out.println("qaui no board");
 		int p = get(move.getStart());
 		set(0, move.getStart());
 		the_hole = move.getStart();
@@ -70,6 +111,7 @@ public class JackBoard implements IBoard, Serializable
 		moves.add(move);
 		pcs.firePropertyChange("solution", null, move);
 //		pcs.firePropertyChange(IBoard.MOVE, null, move);
+		isWhiteTurn = !isWhiteTurn;
 		return true;
 	}
 
@@ -204,11 +246,20 @@ public class JackBoard implements IBoard, Serializable
 	 * The moves() method computes possible moves to <x:y>,
 	 * represented by the Positiones of pieces to move.
 	 */
-	List<Position> moves(int x, int y)
+	List<Position> moves(int x, int y, int playerColorPiece)
 	{
 		List<Position> v = new ArrayList<Position>();
-		for(int i = 0; (i<move_check_table.length); i++)
+		for(int i = 0; (i<move_check_table.length); i++){
+
+			if (playerColorPiece != -1 && (i == 0 || i == 2)) {
+				continue;
+			}
+			if (playerColorPiece != 1 && (i == 1 || i == 3)) {
+				continue;
+			}
+
 			check(v, move_check_table[i], x, y);
+		}
 		return v;
 	}
 
@@ -273,10 +324,10 @@ public class JackBoard implements IBoard, Serializable
 		return true;
 	}
 
-	List<Position> moves(Position hole)
-	{
-		return moves(hole.x, hole.y);
-	}
+	// List<Position> moves(Position hole)
+	// {
+	// 	return moves(hole.x, hole.y);
+	// }
 
 	boolean isJumpMove(int x, int y)
 	{

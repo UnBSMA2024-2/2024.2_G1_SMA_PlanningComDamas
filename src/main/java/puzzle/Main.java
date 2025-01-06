@@ -20,6 +20,8 @@ public class Main
 	{
 		IExternalAccess platform = Starter.createPlatform(PlatformConfigurationHandler.getDefault()).get();
 		CreationInfo ci = new CreationInfo().setFilename("puzzle/SokratesAgent.class");
+		CreationInfo ci2 = new CreationInfo().setFilename("puzzle/SokratesAgent.class");
 		platform.createComponent(ci).get();
+		platform.createComponent(ci2).get();
 	}
 }

@@ -33,6 +33,8 @@ public class Board implements IBoard, Serializable
 	//public ConcurrentPropertyChangeSupport pcs;
 	public SimplePropertyChangeSupport pcs;
 
+	private boolean isWhiteTurn = true;
+
 	//-------- constructors --------
 
 	/**
@@ -78,12 +80,34 @@ public class Board implements IBoard, Serializable
 		}
 	}
 
+	public int getPlayerColorPiece(){
+		if(isWhiteTurn) {
+			isWhiteTurn = false;
+			return 1;
+		} else {
+			isWhiteTurn = true;
+			return -1;
+		}
+	};
+
+	public boolean isWhitePlayerTurn(){
+		return isWhiteTurn;
+	};
+
 	/**
 	 *  Get a piece for a location.
 	 */
 	public synchronized Piece getPiece(Position pos)
 	{
 		return (Piece)pieces.get(pos);
+	}
+
+	/**
+	 *  Get possible moves.
+	 *  @return Get all possible move.
+	 */
+	public synchronized List<Move> getPossibleMoves(int number){
+		return getPossibleMoves();
 	}
 
 	/**
