@@ -59,18 +59,14 @@ Adicione o Java 11 as suas variáveis de ambiente
 1.  Primeiramente acesse seu arquivo bashrc usando seu editor de texto de preferencia,
     no exemplo abaixo é utilizado o Visual Studio Code
 
-        ```bash
         code ~/.bashrc
-        ```
 
 2.  Em seguida adicione as seguintes linhas no final do arquivo bashrc, observe que não é necessário
     modificar outras partes relacionas a esse arquivo
 
-        ```bash
         # Java 11
         export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
         export PATH=$JAVA_HOME/bin:$PATH
-        ```
 
 Verifique sua instalação
 
@@ -91,21 +87,17 @@ Em seguida, é necessário adicionar o SDKMAN! as suas variáveis de ambiente
 1.  Primeiramente acesse seu bashrc usando seu editor de texto de preferencia,
     no exemplo abaixo é utilizado o Visual Studio Code.
 
-        ```bash
         code ~/.bashrc
-        ```
 
 2.  Em seguida adicione as seguintes linhas no final do arquivo bashrc, observe que não é necessário
     modificar outras partes relacionas a esse arquivo
 
-        ```bash
         # SDKMAN!
         source "$HOME/.sdkman/bin/sdkman-init.sh"
 
         #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
         export SDKMAN_DIR="$HOME/.sdkman"
         [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-        ```
 
 Instale o Gradle 8.12 utilizando o SDKMAN!
 
