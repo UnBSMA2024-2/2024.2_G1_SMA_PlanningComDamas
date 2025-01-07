@@ -1,60 +1,156 @@
-# NomeDoProjeto
+# Planning com damas
 
 **Disciplina**: FGA0134 - Sistemas Multiagentes <br>
 **Nro do Grupo (de acordo com a Planilha de Divisão dos Grupos)**: 1<br>
 **Frente de Pesquisa**: Planning<br>
 
 ## Alunos
-|Matrícula | Aluno |
-| -- | -- |
-| 19/0011911  |  Ciro Costa de Araújo |
+| Matrícula  | Aluno                             |
+| ---------- | --------------------------------- |
+| 19/0011911 | Ciro Costa de Araújo              |
 | 19/0112123 | Lucas Gabriel Sousa Camargo Paiva |
-| 19/0033088 | Lucas Braun Vieira Xavier |
-| 21/1062437 | RAQUEL FERREIRA ANDRADE |
+| 19/0033088 | Lucas Braun Vieira Xavier         |
+| 21/1062437 | Raquel Ferreira Andrade           |
 
 ## Sobre 
-Descreva o seu projeto em linhas gerais. 
-Use referências, links, que permitam conhecer um pouco mais sobre o projeto.
-Capriche nessa seção, pois ela é a primeira a ser lida pelos interessados no projeto.
+
+Esse projeto tem como objetivo realizar a representação de um jogo de damas, em um tabuleiro 8x8, utilizando 
+de Sistemas Multiagentes, mais especificamente utilizando do framework [Jadex](https://www.activecomponents.org/index.html#/project/news). Para isso foi implamentado um jogo que ocorre entre dois agentes, os quais disputam uma partida de damas.
 
 ## Screenshots
-Adicione 2 ou mais screenshots do projeto em termos de interface e/ou funcionamento.
 
-## Instalação 
-**Linguagens**: xxxxxx<br>
-**Tecnologias**: xxxxxx<br>
-Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
-Insira um manual ou um script para auxiliar ainda mais.
-Gifs animados e outras ilustrações são bem-vindos!
+![Figura 1 - Inicio de partida.](./assets/damas-inicial.png)
+
+<center> Figura 1 - Inicio de partida.</center>
+
+<br>
+
+![Figura 2 - Jogo em andamento.](./assets/damas-jogo.png)
+
+<center> Figura 2 - Jogo em andamento.</center>
+
+## Tecnologias utilizadas 
+
+**Linguagens**: [Java 11](https://www.oracle.com/java/technologies/?er=221886)<br>
+**Framework**: [Jadex](https://download.actoron.com/docs/releases/jadex-3.0.43/jadex-mkdocs/getting-started/getting-started/) <br>
+**Build e execução automatizada**: [Gradle 8.12](https://gradle.org/install/)
+
+## Configurando o ambiente em sistemas Linux baseados no Debian
+
+### Para outros Sistemas Operacionais consulte a documentação oficial do Java e Gradle e realize a instalação nas versões indicadas
+
+### Instalação do Java 11
+
+Instale o Java
+   ```bash
+   sudo apt install openjdk-11-jdk -y
+   ```
+Execute o comando e selecione o Java 11 através da CLI
+   ```bash
+   sudo update-alternatives --config java
+   ```
+Adicione o Java 11 as suas variáveis de ambiente
+1. Primeiramente acesse seu arquivo bashrc usando seu editor de texto de preferencia,
+no exemplo abaixo é utilizado o Visual Studio Code
+
+    ```bash
+    code ~/.bashrc
+    ```
+
+2. Em seguida adicione as seguintes linhas no final do arquivo bashrc, observe que não é necessário
+modificar outras partes relacionas a esse arquivo
+
+    ```bash
+    # Java 11
+    export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+    export PATH=$JAVA_HOME/bin:$PATH
+    ```
+
+Verifique sua instalação
+   ```bash
+    java -version
+   ```
+
+### Instalação do Gradle 8.12
+
+Para facilitar a instalação do Gradle pode-se usar o SDKMAN!, o qual pode ser instalado através do comando
+
+   ```bash
+   curl -s "https://get.sdkman.io" | bash
+   ```
+
+Em seguida, é necessário adicionar o SDKMAN! as suas variáveis de ambiente
+1. Primeiramente acesse seu bashrc usando seu editor de texto de preferencia,
+no exemplo abaixo é utilizado o Visual Studio Code.
+
+    ```bash
+    code ~/.bashrc
+    ```
+
+2. Em seguida adicione as seguintes linhas no final do arquivo bashrc, observe que não é necessário
+modificar outras partes relacionas a esse arquivo
+
+    ```bash
+    # SDKMAN!
+    source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+    #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+    export SDKMAN_DIR="$HOME/.sdkman"
+    [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+    ```
+
+Instale o Gradle 8.12 utilizando o SDKMAN!
+
+```bash
+sdk install gradle 8.12
+```
+
+Por fim , verifique sua instalação
+```bash
+gradle --version
+```
 
 ## Uso 
-Explique como usar seu projeto.
-Procure ilustrar em passos, com apoio de telas do software, seja com base na interface gráfica, seja com base no terminal.
-Nessa seção, deve-se revelar de forma clara sobre o funcionamento do software.
+
+Após a instalação de todas dependencias do projeto, conforme indicado anteriormente, basta executar o seguinte comando para realizar o build e execução do projeto:
+
+```bash
+gradle build && gradle run
+```
+
+Após isso, o programa irá inicar uma interface gráfica com o Jadex Control Center e outra interface gráfica com o jogo de damas.
 
 ## Vídeo
-Adicione 1 ou mais vídeos com a execução do projeto.
-Procure: 
-(i) Introduzir o projeto;
-(ii) Mostrar passo a passo o código, explicando-o, e deixando claro o que é de terceiros, e o que é contribuição real da equipe;
-(iii) Apresentar particularidades do Paradigma, da Linguagem, e das Tecnologias, e
-(iV) Apresentar lições aprendidas, contribuições, pendências, e ideias para trabalhos futuros.
-OBS: TODOS DEVEM PARTICIPAR, CONFERINDO PONTOS DE VISTA.
-TEMPO: +/- 15min
+
+<video src='./assets/gravacao.mp4'></video>
+
+[Arquivo de apresentação](./assets/gravacao.mp4)
 
 ## Participações
-Apresente, brevemente, como cada membro do grupo contribuiu para o projeto.
-|Nome do Membro | Contribuição | Significância da Contribuição para o Projeto (Excelente/Boa/Regular/Ruim/Nula) | Comprobatórios (ex. links para commits)
-| -- | -- | -- | -- |
-| Fulano  |  Programação dos Fatos da Base de Conhecimento Lógica | Boa | Commit tal (com link)
 
-## Outros 
-Quaisquer outras informações sobre o projeto podem ser descritas aqui. Não esqueça, entretanto, de informar sobre:
-(i) Lições Aprendidas;
-(ii) Percepções;
-(iii) Contribuições e Fragilidades, e
-(iV) Trabalhos Futuros.
+| Nome do Membro                    | Contribuição                                                                                                                                                                                                                                                                                                                                      | Significância da Contribuição para o Projeto (Excelente/Boa/Regular/Ruim/Nula) | Comprobatórios (ex. links para commits) |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------- |
+| Lucas Gabriel Sousa Camargo Paiva | Ajustes no tamanho e organização do tabuleiro para o jogo de damas, modificação das peças e movimento para representar o jogo de dama,  produção da implementação da lógica de estratégia de seleção de movimentos. Auxílio na criação da lógica do agente Sócrates e do tabuleiro. Correção do build e execução automatizado e criação do README | Excelente                                                                            | [Commit associado](https://github.com/UnBSMA2024-2/2024.2_G1_SMA_PlanningComDamas/commit/fbf57c0418c83268f532718d7357d4fa532709ac)                  |
+
+## Outros
+
+### Lições Aprendidas
+ - Aplicação do paradigma multiagentes com foco em planning utilizando de intencionalidade para criação do planejamento do agente e entendimento inicial do uso do framework Jadex.
+
+### Percepções
+- Dificuldade de trabalhar com tecnologias com pouca documentação e comunidade não tão atuante. Apesar disso, foi interessante poder explorar um novo framework que implementa sistemas multiagentes de uma forma única.
+
+### Contribuições e Fragilidades
+- A equipe se desempenho razoavelmente bem, porém houve uma falta de organização da equipe para desempenho de atividades semanais associadas à disciplina.
+
+### Trabalhos Futuros
+- Adição da promoção das damas para Rainhas ao chegar ao fim do tabuleiro
+- Adição de uma tabela de movimentos especial para peças Rainhas
+- Adição da obrigatoriedade de se tomar uma ou multiplas peça caso possível
+- Possibilidade de mudança de estratégias dos agentes
+- Possibilidade de iniciar agentes com estratégias diferentes
+- Apresentar um vencedor ao final da partida
+- Adição da Sprite das casas negras do tabuleiro
 
 ## Fontes
-Referencie, adequadamente, as referências utilizadas.
-Indique ainda sobre fontes de leitura complementares.
+[1] Active Components. Activecomponents.org. Disponível em: <https://www.activecomponents.org/index.html#/project/news>. Acesso em: 6 jan. 2025.
