@@ -26,6 +26,12 @@ public class Piece	implements Serializable
 		this.is_queen = false;
 	}
 
+	public Piece(boolean is_white, boolean is_queen)
+	{
+		this.is_white = is_white;
+		this.is_queen = is_queen;
+	}
+
 	//-------- methods --------
 
 	/**

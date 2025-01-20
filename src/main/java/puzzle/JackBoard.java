@@ -16,7 +16,9 @@ public class JackBoard implements IBoard, Serializable
   private static volatile JackBoard instance;
 
 	protected Piece white_piece = new Piece(true);
+	protected Piece queen_white_piece = new Piece(true,true);
 	protected Piece black_piece = new Piece(false);
+	protected Piece queen_black_piece = new Piece(false, true);
 	protected List<Move> moves = new ArrayList<Move>();
 	public SimplePropertyChangeSupport pcs = new SimplePropertyChangeSupport(this);
 
@@ -60,6 +62,10 @@ public class JackBoard implements IBoard, Serializable
 			return white_piece;
 		else if(piece==-1)
 			return black_piece;
+		else if(piece==2)
+			return queen_white_piece;
+		else if(piece==-2)
+			return queen_black_piece;
 		else
 			return null;
 	}
@@ -79,16 +85,15 @@ public class JackBoard implements IBoard, Serializable
 	public List<Move> getPossibleMoves(int playerColorPiece)
 	{
 		List<Move> ret = new ArrayList<Move>();
-		List<List<Position>> allPieces = new ArrayList<>();
-		ArrayList<Position> pieceOldPosition = new ArrayList<Position>();
 		for(int y=0; y<8; y++)
 		{
 			for(int x=0; x<8; x++)
 			{
-				if(get(x,y)!=0 && get(x,y)!=4 && (playerColorPiece == -5 || get(x,y)==playerColorPiece)) {
-
-					List<List<Position>> captures = moves(x, y,playerColorPiece).captures;
-					List<Position> moves = moves(x, y,playerColorPiece).moves;
+				int piece = get(x,y);
+				if(piece!=0 && piece!=4 && (playerColorPiece == -5 || piece==playerColorPiece)) {
+					boolean isQueen = (piece==-2 || piece==2);
+					List<List<Position>> captures = moves(x, y,playerColorPiece,isQueen).captures;
+					List<Position> moves = moves(x, y,playerColorPiece,isQueen).moves;
 					while (captures.size() < moves.size()) {
 						captures.add(new ArrayList<Position>());
 					}
@@ -128,6 +133,7 @@ public class JackBoard implements IBoard, Serializable
 		pcs.firePropertyChange("solution", null, move);
 		// pcs.firePropertyChange(IBoard.MOVE, null, move);
 		isWhiteTurn = !isWhiteTurn;
+		
 		return true;
 	}
 
@@ -262,15 +268,42 @@ public class JackBoard implements IBoard, Serializable
 		{ 2, 2, 0, 1, 1 },
 	};
 
+	static int[][] move_check_table_black_queen = {
+		{ 2, -2, 0, 1, -1 }, //white
+		{ -2, -2, 0, -1, -1 }, //white
+		{ -2, 2, 0, -1, 1 }, //black
+		{ 2, 2, 0, 1, 1 }, //black
+		{ 1, -1, 0}, //white
+		{ -1, -1, 0},//white
+		{ -1, 1, 0},//black
+		{ 1, 1, 0},//black
+	};
+
+	static int[][] move_check_table_white_queen = {
+		{ -2, 2, 0, -1, 1 }, //black
+		{ 2, 2, 0, 1, 1 }, //black
+		{ 2, -2, 0, 1, -1 }, //white
+		{ -2, -2, 0, -1, -1 }, //white
+		{ -1, 1, 0},//black
+		{ 1, 1, 0},//black
+		{ 1, -1, 0}, //white
+		{ -1, -1, 0},//white
+	};
+
 	/**
 	 * The moves() method computes possible moves to <x:y>,
 	 * represented by the Positiones of pieces to move.
 	 */
-	TmpDTO moves(int x, int y, int playerColorPiece)
+	TmpDTO moves(int x, int y, int playerColorPiece, boolean isQueen)
 	{
 		List<List<Position>> captures = new ArrayList();
 		List<Position> v = new ArrayList<Position>();
 		int[][] check_table = playerColorPiece == 1 ? move_check_table_white : move_check_table_black;
+		if (isQueen) {
+			System.out.println("is queen"+ x+"-"+y);
+			check_table = playerColorPiece == 1 ? move_check_table_white_queen : move_check_table_black_queen;
+		}
+
 		for(int i = 0; (i<check_table.length); i++){
 			boolean valid = check(v, check_table[i], x, y);
 			if (valid && (i == 2 || i == 3 )) {
@@ -325,9 +358,19 @@ public class JackBoard implements IBoard, Serializable
 		board[x][y] = v;
 	}
 
-	void set(int v, Position s)
+	void set(int pieceNUmber, Position s)
 	{
-		set(v, s.x, s.y);
+		if (isWhiteTurn && pieceNUmber==1) {
+			System.out.println("Sys,"+s+"-=-:::"+pieceNUmber+" "+" -=-=-=-=-=- ");
+		}
+		if(s.y == 7 && pieceNUmber == 1) {
+			System.out.println("Formando queen black"+"S:"+s.toString());
+			pieceNUmber = 2;
+		} else if(pieceNUmber == -1 && s.y ==0) {
+			System.out.println("Formando queen white"+"S:"+s.toString());
+			pieceNUmber = -2;
+		}
+		set(pieceNUmber, s.x, s.y);
 	}
 
 	boolean solution()

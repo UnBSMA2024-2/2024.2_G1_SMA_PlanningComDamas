@@ -179,6 +179,11 @@ public class Board implements IBoard, Serializable
 	
 			Piece piece = getPiece(move.getStart());
 			pieces.remove(move.getStart());
+			if (move.getEnd().y == 0 && piece.is_white) {
+				piece.promoteToQueen();
+			} else if (move.getEnd().y == 7 && !piece.is_white) {
+				piece.promoteToQueen();
+			}
 			pieces.put(move.getEnd(), piece);
 			moves.add(move);
 			hole_pos = move.getStart();
