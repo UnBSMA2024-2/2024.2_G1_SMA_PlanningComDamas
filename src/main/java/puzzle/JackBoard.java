@@ -97,12 +97,17 @@ public class JackBoard implements IBoard, Serializable
 					while (captures.size() < moves.size()) {
 						captures.add(new ArrayList<Position>());
 					}
-					for(int j = 0; j<moves.size(); j++) {					
+					for(int j = 0; j<moves.size(); j++) {
 						ret.add(new Move( new Position(x, y),moves.get(j), captures.get(j)));
 					}
 				}
 			}
 		}
+
+        if (ret.stream().anyMatch(Move::isJumpMove))
+        {
+            ret.removeIf(move -> !move.isJumpMove());
+        }
 
 		return ret;
 	}
