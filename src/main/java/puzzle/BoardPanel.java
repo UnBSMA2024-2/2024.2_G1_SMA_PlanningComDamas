@@ -34,8 +34,8 @@ public class BoardPanel extends JPanel
 	{
 		"white_piece",	SGUI.makeIcon(BoardPanel.class, "/puzzle/images/white_piece.png"),
 		"red_piece",	SGUI.makeIcon(BoardPanel.class, "/puzzle/images/red_piece.png"),
-		"red_dama", SGUI.makeIcon(BoardPanel.class, "/puzzle/images/red_dama.png"),
-		"white_dama", SGUI.makeIcon(BoardPanel.class, "/puzzle/images/white_dama.png"),
+		"red_queen", SGUI.makeIcon(BoardPanel.class, "/puzzle/images/red_queen.png"),
+		"white_queen", SGUI.makeIcon(BoardPanel.class, "/puzzle/images/white_queen.png"),
 		"empty_field", SGUI.makeIcon(BoardPanel.class, "/puzzle/images/empty_field.png"),
 	});
 
@@ -69,9 +69,9 @@ public class BoardPanel extends JPanel
 	/** The component to display white pieces. */
 	protected JLabel empty_field;
 
-	protected JLabel white_dama;
+	protected JLabel white_queen;
 	
-	protected JLabel red_dama;
+	protected JLabel red_queen;
 
 	/** The listeners. */
 	protected List<ActionListener> listeners;
@@ -94,12 +94,12 @@ public class BoardPanel extends JPanel
 		this.wp_image	= ((ImageIcon)icons.getIcon("white_piece")).getImage();
 		this.rp_image	= ((ImageIcon)icons.getIcon("red_piece")).getImage();
 		this.ef_image	= ((ImageIcon)icons.getIcon("empty_field")).getImage();
-		this.dw_image	= ((ImageIcon)icons.getIcon("white_dama")).getImage();
-		this.db_image	= ((ImageIcon)icons.getIcon("red_dama")).getImage();
+		this.dw_image	= ((ImageIcon)icons.getIcon("white_queen")).getImage();
+		this.db_image	= ((ImageIcon)icons.getIcon("red_queen")).getImage();
 		this.white_piece	= new JLabel(new ImageIcon(wp_image), JLabel.CENTER);
 		this.red_piece	= new JLabel(new ImageIcon(rp_image), JLabel.CENTER);
-		this.white_dama	= new JLabel(new ImageIcon(dw_image), JLabel.CENTER);
-		this.red_dama	= new JLabel(new ImageIcon(db_image), JLabel.CENTER);
+		this.white_queen	= new JLabel(new ImageIcon(dw_image), JLabel.CENTER);
+		this.red_queen	= new JLabel(new ImageIcon(db_image), JLabel.CENTER);
 		this.empty_field	= new JLabel(new ImageIcon(ef_image), JLabel.CENTER);
 
 		// Trigger rescaling of images.
@@ -167,9 +167,9 @@ public class BoardPanel extends JPanel
 				rp_image.getScaledInstance((int)cellw, (int)cellh, Image.SCALE_DEFAULT));
 			((ImageIcon)empty_field.getIcon()).setImage(
 				ef_image.getScaledInstance((int)cellw, (int)cellh,Image.SCALE_DEFAULT));
-			((ImageIcon)white_dama.getIcon()).setImage(
+			((ImageIcon)white_queen.getIcon()).setImage(
 				dw_image.getScaledInstance((int)cellw, (int)cellh,Image.SCALE_DEFAULT));
-			((ImageIcon)red_dama.getIcon()).setImage(
+			((ImageIcon)red_queen.getIcon()).setImage(
 				db_image.getScaledInstance((int)cellw, (int)cellh,Image.SCALE_DEFAULT));
 
 			rescale	= false;
@@ -188,7 +188,7 @@ public class BoardPanel extends JPanel
 				{
 					if(piece.isWhite()){
 						if (piece.is_queen) {
-							SGUI.renderObject(g, white_dama, cellw, cellh, x, y, 0);
+							SGUI.renderObject(g, white_queen, cellw, cellh, x, y, 0);
 							
 						} else {
 							SGUI.renderObject(g, white_piece, cellw, cellh, x, y, 0);
@@ -197,7 +197,7 @@ public class BoardPanel extends JPanel
 						}
 					else{
 						if(piece.is_queen){
-							SGUI.renderObject(g, red_dama, cellw, cellh, x, y, 0);
+							SGUI.renderObject(g, red_queen, cellw, cellh, x, y, 0);
 						}else{
 							SGUI.renderObject(g, red_piece, cellw, cellh, x, y, 0);
 						}
