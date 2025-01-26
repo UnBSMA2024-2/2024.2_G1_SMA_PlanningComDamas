@@ -104,6 +104,7 @@ public class JackBoard implements IBoard, Serializable
 			}
 		}
 
+		// Activate must capture rule with this filter
         if (possibleMoves.stream().anyMatch(Move::isJumpMove))
         {
             possibleMoves.removeIf(move -> !move.isJumpMove());

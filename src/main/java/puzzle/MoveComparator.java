@@ -12,7 +12,10 @@ public class MoveComparator implements Comparator<Move>
     /** No strategy: try moves in order of appearance. */
 	public static final String STRATEGY_NONE	= "none";
 
-    /** The strategy preferring moves that involve queens over normal pieces. */
+    /** The strategy preferring moves with captures. */
+    public static final String STRATEGY_PREFER_CAPTURES = "prefer_captures";
+
+    /** The strategy preferring moves that involve queens over normal pieces then captures. */
     public static final String STRATEGY_PREFER_QUEENS = "prefer_queens";
 
     //-------- attributes --------
@@ -43,14 +46,18 @@ public class MoveComparator implements Comparator<Move>
     public int compare(Move move1, Move move2)
 	{
         
+        int compareCaptureCount = Boolean.compare(move2.isJumpMove(), move1.isJumpMove());
+
         boolean isQueen1 = board.getPiece(move1.getStart()).isQueen();
         boolean isQueen2 = board.getPiece(move2.getStart()).isQueen();
         int compareQueen = Boolean.compare(isQueen2, isQueen1);
 
         int ret = 0;
 
-        if (STRATEGY_PREFER_QUEENS.equals(strategy)) {
-            ret = compareQueen != 0 ? compareQueen : 0;
+        if (STRATEGY_PREFER_CAPTURES.equals(strategy)) {
+            ret = compareCaptureCount;
+        } else if (STRATEGY_PREFER_QUEENS.equals(strategy)) {
+            ret = compareQueen != 0 ? compareQueen : compareCaptureCount;
         }
 
         return ret;
