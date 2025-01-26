@@ -17,7 +17,10 @@ public class Move implements Serializable {
 	protected Position end;
 
 	/** The list of captured positions (if any). */
-	protected List<Position> captured;
+	protected Position captured;
+
+	/** Indicate if the move did a capture*/
+	protected boolean jumpMove;
 
 	// -------- constructors --------
 
@@ -27,16 +30,17 @@ public class Move implements Serializable {
 	public Move(Position start, Position end) {
 		this.start = start;
 		this.end = end;
-		this.captured = new ArrayList<>();
+		this.jumpMove = false;
+		this.captured = null;
 	}
 
 	/**
-	 * Create a move with start, end, and captured positions (for multiple
-	 * captures).
+	 * Create a move with start, end, and captured position
 	 */
-	public Move(Position start, Position end, List<Position> captured) {
+	public Move(Position start, Position end, Position captured) {
 		this.start = start;
 		this.end = end;
+		this.jumpMove = true;
 		this.captured = captured;
 	}
 
@@ -57,18 +61,21 @@ public class Move implements Serializable {
 	}
 
 	/**
-	 * Get the list of captured positions (if any).
+	 * Get the capture position (if any).
 	 */
-	public List<Position> getCaptured() {
-		return captured;
+	public Position getCaptured() {
+		if(this.jumpMove == false){
+			return null;
+		}
+		return this.captured;
 	}
 
 	/**
-	 * Test if it is a jump move.
+	 * Show if it is a jump move.
 	 */
 	public boolean isJumpMove() {
 		// Check if this move has any captures
-		return !captured.isEmpty();
+		return this.jumpMove;
 	}
 
 	/**
