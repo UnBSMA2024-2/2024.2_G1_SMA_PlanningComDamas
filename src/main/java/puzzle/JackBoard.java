@@ -3,6 +3,7 @@ package puzzle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import jadex.commons.SimplePropertyChangeSupport;
@@ -146,6 +147,15 @@ public class JackBoard implements IBoard, Serializable
 		// pcs.firePropertyChange(IBoard.MOVE, null, move);
 		isWhiteTurn = !isWhiteTurn;
 		
+		// Wait after eache move, so we can see the UI changing slowly
+		Random random = new Random();
+		int delay = 500 + random.nextInt(501);
+		try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            System.err.println("The thread was interrupted: " + e.getMessage());
+        }
+
 		return true;
 	}
 
