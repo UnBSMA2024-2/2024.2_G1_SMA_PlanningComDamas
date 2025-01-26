@@ -410,7 +410,10 @@ public class JackBoard implements IBoard, Serializable
 						onlyPiecesOf = board[i][j];
 					}
 					else if((onlyPiecesOf!=board[i][j])){
-						return false;
+
+						if((onlyPiecesOf!=board[i][j]+1) || (onlyPiecesOf!=board[i][j]-1)){
+							return false;
+						}
 					}
 				}
 			}
