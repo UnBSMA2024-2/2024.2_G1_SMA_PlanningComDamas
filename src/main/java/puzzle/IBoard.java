@@ -15,7 +15,7 @@ public interface IBoard
 	/** Property event for move taken back. */
 	public static final String TAKEBACK= "takeback";
 
-	public int getPlayerColorPiece();
+	public int getPlayerPieceColor();
 
 	public boolean isWhitePlayerTurn();
 
@@ -28,7 +28,7 @@ public interface IBoard
 	 *  Get possible moves.
 	 *  @return Get all possible move.
 	 */
-	public List<Move> getPossibleMoves(int playerColorPiece);
+	public List<Move> getPossibleMoves(int playerPieceColor);
 
 	/**
 	 *  Get possible moves.

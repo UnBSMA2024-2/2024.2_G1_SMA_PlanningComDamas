@@ -41,7 +41,7 @@ public class JackBoard implements IBoard, Serializable
 		}
 	}
 
-	public int getPlayerColorPiece() {
+	public int getPlayerPieceColor() {
 		if(isWhiteTurn) {
 			isWhiteTurn = false;
 			return 1;
@@ -86,7 +86,7 @@ public class JackBoard implements IBoard, Serializable
 	 * Get possible moves.
 	 * @return Get all possible move.
 	 */
-	public List<Move> getPossibleMoves(int playerColorPiece)
+	public List<Move> getPossibleMoves(int playerPieceColor)
 	{
 
 		List<Move> possibleMoves = new ArrayList<Move>();
@@ -96,8 +96,8 @@ public class JackBoard implements IBoard, Serializable
 			{
 				int piece = get(x,y);
 				
-				if(piece != 0 && (piece==playerColorPiece || piece == playerColorPiece+1 
-					|| piece == playerColorPiece-1)) {
+				if(piece != 0 && (piece==playerPieceColor || piece == playerPieceColor+1 
+					|| piece == playerPieceColor-1)) {
 					
 					boolean isQueen = (piece == -2 || piece == 2);
 					possibleMoves.addAll(moves(x, y, piece, isQueen));
@@ -301,15 +301,15 @@ public class JackBoard implements IBoard, Serializable
 		{ 2, 2, 0, 1, 1 }   // Salto para baixo e para a direita (captura, passando por uma peça adversária em 1, 1).
 	};
 
-	static int[][] move_check_table_white_queen = {
-		{ 1, -1, 0},         // Diagonal para cima e para a direita (movimento simples).
-		{ -1, -1, 0},        // Diagonal para cima e para a esquerda (movimento simples).
-		{ 2, -2, 0, 1, -1 }, // Salto para cima e para a direita (captura, passando por uma peça adversária em 1, -1).
-		{ -2, -2, 0, -1, -1 }, // Salto para cima e para a esquerda (captura, passando por uma peça adversária em -1, -1).	
+	static int[][] move_check_table_white_queen = {			
 		{ -1, 1, 0},         // Diagonal para baixo e para a esquerda (movimento simples).
 		{ 1, 1, 0},          // Diagonal para baixo e para a direita (movimento simples).
 		{ -2, 2, 0, -1, 1 }, // Salto para baixo e para a esquerda (captura, passando por uma peça adversária em -1, 1).
-		{ 2, 2, 0, 1, 1 }   // Salto para baixo e para a direita (captura, passando por uma peça adversária em 1, 1).
+		{ 2, 2, 0, 1, 1 },  // Salto para baixo e para a direita (captura, passando por uma peça adversária em 1, 1).
+		{ 1, -1, 0},         // Diagonal para cima e para a direita (movimento simples).
+		{ -1, -1, 0},        // Diagonal para cima e para a esquerda (movimento simples).
+		{ 2, -2, 0, 1, -1 }, // Salto para cima e para a direita (captura, passando por uma peça adversária em 1, -1).
+		{ -2, -2, 0, -1, -1 } // Salto para cima e para a esquerda (captura, passando por uma peça adversária em -1, -1).
 	};
 
 	/**
