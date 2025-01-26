@@ -41,8 +41,11 @@ import jadex.micro.annotation.Agent;
 @BDIConfigurations(
 {	
 	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_CAPTURES), // Best strategy first.
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_NO_QUEENS_THAN_PREFER_CAPTURES),
+	@BDIConfiguration(name=MoveComparator.STRATEGY_NONE),
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_NO_QUEENS),
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_QUEENS_THAN_PREFER_CAPTURES),
 	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_QUEENS),  
-	@BDIConfiguration(name=MoveComparator.STRATEGY_NONE)
 })
 public class SokratesAgent
 {
