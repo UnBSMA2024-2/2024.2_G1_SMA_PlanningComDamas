@@ -3,6 +3,7 @@ package puzzle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import jadex.commons.SimplePropertyChangeSupport;
@@ -13,31 +14,34 @@ import jadex.commons.beans.PropertyChangeListener;
  */
 public class JackBoard implements IBoard, Serializable
 {
-  private static volatile JackBoard instance;
+  	private static volatile JackBoard instance;
+	private final int invalidPosition = 4;
+
+	protected List<Move> moves = new ArrayList<Move>();
+	private boolean isWhiteTurn = true;
 
 	protected Piece white_piece = new Piece(true);
 	protected Piece queen_white_piece = new Piece(true,true);
 	protected Piece black_piece = new Piece(false);
 	protected Piece queen_black_piece = new Piece(false, true);
-	protected List<Move> moves = new ArrayList<Move>();
+
 	public SimplePropertyChangeSupport pcs = new SimplePropertyChangeSupport(this);
 
-	private boolean isWhiteTurn = true;
+	public static JackBoard getInstance(){
+		JackBoard result = instance;
+		if (result != null) {
+			return result;
+		}
 
-  public static JackBoard getInstance() {
-    JackBoard result = instance;
-    if (result != null) {
-      return result;
-    }
-    synchronized (JackBoard.class) {
-      if (instance == null) {
-        instance = new JackBoard();
-      }
-      return instance;
-    }
-  }
+		synchronized (JackBoard.class) {
+			if (instance == null) {
+				instance = new JackBoard();
+			}
+			return instance;
+		}
+	}
 
-	public int getPlayerColorPiece() {
+	public int getPlayerPieceColor() {
 		if(isWhiteTurn) {
 			isWhiteTurn = false;
 			return 1;
@@ -48,9 +52,8 @@ public class JackBoard implements IBoard, Serializable
 	}
 
 	public boolean isWhitePlayerTurn() {
-			return isWhiteTurn;
+		return isWhiteTurn;
 	}
-
 
 	/**
 	 * Get a piece for a location.
@@ -75,41 +78,40 @@ public class JackBoard implements IBoard, Serializable
 	 * @return Get all possible move.
 	 */
 	public List<Move> getPossibleMoves(){
-		return getPossibleMoves(-5);
+		List<Move> possibleMoves = new ArrayList<Move>();
+		return possibleMoves;
 	}
 
 	/**
 	 * Get possible moves.
 	 * @return Get all possible move.
 	 */
-	public List<Move> getPossibleMoves(int playerColorPiece)
+	public List<Move> getPossibleMoves(int playerPieceColor)
 	{
-		List<Move> ret = new ArrayList<Move>();
+
+		List<Move> possibleMoves = new ArrayList<Move>();
 		for(int y=0; y<8; y++)
 		{
 			for(int x=0; x<8; x++)
 			{
 				int piece = get(x,y);
-				if(piece!=0 && piece!=4 && (playerColorPiece == -5 || piece==playerColorPiece)) {
-					boolean isQueen = (piece==-2 || piece==2);
-					List<List<Position>> captures = moves(x, y,playerColorPiece,isQueen).captures;
-					List<Position> moves = moves(x, y,playerColorPiece,isQueen).moves;
-					while (captures.size() < moves.size()) {
-						captures.add(new ArrayList<Position>());
-					}
-					for(int j = 0; j<moves.size(); j++) {
-						ret.add(new Move( new Position(x, y),moves.get(j), captures.get(j)));
-					}
+				
+				if(piece != 0 && (piece==playerPieceColor || piece == playerPieceColor+1 
+					|| piece == playerPieceColor-1)) {
+					
+					boolean isQueen = (piece == -2 || piece == 2);
+					possibleMoves.addAll(moves(x, y, piece, isQueen));
 				}
 			}
 		}
 
-        if (ret.stream().anyMatch(Move::isJumpMove))
+		// Activate must capture rule with this filter
+        if (possibleMoves.stream().anyMatch(Move::isJumpMove))
         {
-            ret.removeIf(move -> !move.isJumpMove());
+            possibleMoves.removeIf(move -> !move.isJumpMove());
         }
 
-		return ret;
+		return possibleMoves;
 	}
 
 	/**
@@ -118,27 +120,42 @@ public class JackBoard implements IBoard, Serializable
 	 */
 	public boolean move(Move move)
 	{
-		// todo: check?
-
 		int p = get(move.getStart());
 		int f = get(move.getEnd());
 		if (f != 0) {
 			return false;
 		}
+		
 		set(0, move.getStart()); // deixando um buraco no movimento inicial
 		if (move.isJumpMove()) {
-			for(Position captured: move.getCaptured()) {
-				// set(0, captured);
-				board[captured.x][captured.y] = 0;
-			}
+			set(0, move.getCaptured());
 		}
+
 		// the_hole = move.getStart();
 		set(p, move.getEnd());
-		// moves.add(move);
+		
+		// Promote piece to queen
+		if(move.getEnd().getY() == 7 && p == -1){
+			set(-2, move.getEnd());
+		}
+
+		if(move.getEnd().getY() == 0 && p == 1){
+			set(2, move.getEnd());
+		}
+
 		pcs.firePropertyChange("solution", null, move);
 		// pcs.firePropertyChange(IBoard.MOVE, null, move);
 		isWhiteTurn = !isWhiteTurn;
 		
+		// Wait after eache move, so we can see the UI changing slowly
+		Random random = new Random();
+		int delay = 500 + random.nextInt(501);
+		try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            System.err.println("The thread was interrupted: " + e.getMessage());
+        }
+
 		return true;
 	}
 
@@ -260,72 +277,65 @@ public class JackBoard implements IBoard, Serializable
 
 	// y, x, piece_col
 	static int[][] move_check_table_white = {
-		{ 1, -1, 0},
-		{ -1, -1, 0},
-		{ 2, -2, 0, 1, -1 },
-		{ -2, -2, 0, -1, -1 }
+		{ 1, -1, 0},         // Diagonal para cima e para a direita (movimento simples).
+		{ -1, -1, 0},        // Diagonal para cima e para a esquerda (movimento simples).
+		{ 2, -2, 0, 1, -1 }, // Salto para cima e para a direita (captura, passando por uma peça adversária em 1, -1).
+		{ -2, -2, 0, -1, -1 } // Salto para cima e para a esquerda (captura, passando por uma peça adversária em -1, -1).	
 	};
 
 	static int[][] move_check_table_black = {
-		{ -1, 1, 0},
-		{ 1, 1, 0},
-		{ -2, 2, 0, -1, 1 },
-		{ 2, 2, 0, 1, 1 },
+		{ -1, 1, 0},         // Diagonal para baixo e para a esquerda (movimento simples).
+		{ 1, 1, 0},          // Diagonal para baixo e para a direita (movimento simples).
+		{ -2, 2, 0, -1, 1 }, // Salto para baixo e para a esquerda (captura, passando por uma peça adversária em -1, 1).
+		{ 2, 2, 0, 1, 1 }   // Salto para baixo e para a direita (captura, passando por uma peça adversária em 1, 1).
 	};
 
 	static int[][] move_check_table_black_queen = {
-		{ 2, -2, 0, 1, -1 }, //white
-		{ -2, -2, 0, -1, -1 }, //white
-		{ -2, 2, 0, -1, 1 }, //black
-		{ 2, 2, 0, 1, 1 }, //black
-		{ 1, -1, 0}, //white
-		{ -1, -1, 0},//white
-		{ -1, 1, 0},//black
-		{ 1, 1, 0},//black
+		{ 1, -1, 0},         // Diagonal para cima e para a direita (movimento simples).
+		{ -1, -1, 0},        // Diagonal para cima e para a esquerda (movimento simples).
+		{ 2, -2, 0, 1, -1 }, // Salto para cima e para a direita (captura, passando por uma peça adversária em 1, -1).
+		{ -2, -2, 0, -1, -1 }, // Salto para cima e para a esquerda (captura, passando por uma peça adversária em -1, -1).	
+		{ -1, 1, 0},         // Diagonal para baixo e para a esquerda (movimento simples).
+		{ 1, 1, 0},          // Diagonal para baixo e para a direita (movimento simples).
+		{ -2, 2, 0, -1, 1 }, // Salto para baixo e para a esquerda (captura, passando por uma peça adversária em -1, 1).
+		{ 2, 2, 0, 1, 1 }   // Salto para baixo e para a direita (captura, passando por uma peça adversária em 1, 1).
 	};
 
-	static int[][] move_check_table_white_queen = {
-		{ -2, 2, 0, -1, 1 }, //black
-		{ 2, 2, 0, 1, 1 }, //black
-		{ 2, -2, 0, 1, -1 }, //white
-		{ -2, -2, 0, -1, -1 }, //white
-		{ -1, 1, 0},//black
-		{ 1, 1, 0},//black
-		{ 1, -1, 0}, //white
-		{ -1, -1, 0},//white
+	static int[][] move_check_table_white_queen = {			
+		{ -1, 1, 0},         // Diagonal para baixo e para a esquerda (movimento simples).
+		{ 1, 1, 0},          // Diagonal para baixo e para a direita (movimento simples).
+		{ -2, 2, 0, -1, 1 }, // Salto para baixo e para a esquerda (captura, passando por uma peça adversária em -1, 1).
+		{ 2, 2, 0, 1, 1 },  // Salto para baixo e para a direita (captura, passando por uma peça adversária em 1, 1).
+		{ 1, -1, 0},         // Diagonal para cima e para a direita (movimento simples).
+		{ -1, -1, 0},        // Diagonal para cima e para a esquerda (movimento simples).
+		{ 2, -2, 0, 1, -1 }, // Salto para cima e para a direita (captura, passando por uma peça adversária em 1, -1).
+		{ -2, -2, 0, -1, -1 } // Salto para cima e para a esquerda (captura, passando por uma peça adversária em -1, -1).
 	};
 
 	/**
 	 * The moves() method computes possible moves to <x:y>,
 	 * represented by the Positiones of pieces to move.
 	 */
-	TmpDTO moves(int x, int y, int playerColorPiece, boolean isQueen)
+	List<Move> moves(int x, int y, int pieceType, boolean isQueen)
 	{
-		List<List<Position>> captures = new ArrayList();
-		List<Position> v = new ArrayList<Position>();
-		int[][] check_table = playerColorPiece == 1 ? move_check_table_white : move_check_table_black;
+		int[][] check_table = pieceType == 1 ? move_check_table_white : move_check_table_black;
 		if (isQueen) {
 			System.out.println("is queen"+ x+"-"+y);
-			check_table = playerColorPiece == 1 ? move_check_table_white_queen : move_check_table_black_queen;
+			check_table = pieceType == 2 ? move_check_table_white_queen : move_check_table_black_queen;
 		}
 
-		for(int i = 0; (i<check_table.length); i++){
-			boolean valid = check(v, check_table[i], x, y);
-			if (valid && (i == 2 || i == 3 )) {
-				List<Position> tempList = new ArrayList<>();
-				tempList.add(new Position(x+check_table[i][3], y+check_table[i][4]));
-				captures.add(tempList);
-			}
+		List<Move> possibleMoves = new ArrayList<Move>();
+		for(int i = 0; i < check_table.length; i++){
+			check(possibleMoves, check_table[i], x, y);
 		}
-		return new TmpDTO(captures, v);
-
+		return possibleMoves;
 	}
 
 	/**
 	 * The check() method processes a move_check_table entry, and adds
-	 * a Position to the Vector when the entry applies.
+	 * a Move to the Vector when the entry applies.
 	 */
-	boolean check(List<Position> v, int[] m, int x, int y)
+	boolean check(List<Move> possibleMoves, int[] m, int x, int y)
 	{
 		int x1 = (x+m[0]);
 		int y1 = (y+m[1]);
@@ -333,23 +343,39 @@ public class JackBoard implements IBoard, Serializable
 
 		// System.out.println("Current piece: " + piece +" x: " + x + " y: " + y +"\n"+"x1: " + x1 + " y1: " + y1+" Future space piece: " + get(x1, y1));
 
-		if((get(x1, y1)==m[2]))
-		{
-			if(((m.length==3) || (get((x+m[3]), (y+m[4])) != piece)))
+		if((get(x1, y1) == m[2]))
+		{	
+			
+			if(m.length == 3)
 			{
-				Position s = new Position(x1, y1);
-				v.add(s);
-				// System.out.println("Adding position: " + s);
+				Position startPosition = new Position (x, y);
+				Position endPosition = new Position (x1, y1);
+				Move newMove = new Move(startPosition, endPosition);
+				possibleMoves.add(newMove);
+				// System.out.println("Adding move: " + newMove);
+				return true;
+			}
+
+			int peaceToCapture = get((x+m[3]), (y+m[4]));
+			if(m.length == 5 &&  peaceToCapture != piece && peaceToCapture != piece-1 && peaceToCapture != piece+1 
+			&&  peaceToCapture != 0  &&  peaceToCapture != invalidPosition ){
+				Position startPosition = new Position (x, y);
+				Position endPosition = new Position (x1, y1);
+				Position captured = new Position ((x+m[3]), (y+m[4]));
+				Move newMove = new Move(startPosition, endPosition, captured);
+				possibleMoves.add(newMove);
+				// System.out.println("Adding move: " + newMove);
 				return true;
 			}
 		}
+		
 		return false;
 	}
 
 	int get(int x, int y)
-	{
+	{	
 		if(((((x<0) || (x>= 8)) || (y<0)) || (y>= 8)))
-			return 4;
+			return invalidPosition;
 		return board[x][y];
 	}
 
@@ -363,19 +389,13 @@ public class JackBoard implements IBoard, Serializable
 		board[x][y] = v;
 	}
 
-	void set(int pieceNUmber, Position s)
+	void set(int pieceNumber, Position s)
 	{
-		if (isWhiteTurn && pieceNUmber==1) {
-			System.out.println("Sys,"+s+"-=-:::"+pieceNUmber+" "+" -=-=-=-=-=- ");
+		if(s == null){
+			return; 
 		}
-		if(s.y == 7 && pieceNUmber == 1) {
-			System.out.println("Formando queen black"+"S:"+s.toString());
-			pieceNUmber = 2;
-		} else if(pieceNUmber == -1 && s.y ==0) {
-			System.out.println("Formando queen white"+"S:"+s.toString());
-			pieceNUmber = -2;
-		}
-		set(pieceNUmber, s.x, s.y);
+
+		set(pieceNumber, s.x, s.y);
 	}
 
 	boolean solution()
@@ -390,7 +410,10 @@ public class JackBoard implements IBoard, Serializable
 						onlyPiecesOf = board[i][j];
 					}
 					else if((onlyPiecesOf!=board[i][j])){
-						return false;
+
+						if((onlyPiecesOf!=board[i][j]+1) || (onlyPiecesOf!=board[i][j]-1)){
+							return false;
+						}
 					}
 				}
 			}

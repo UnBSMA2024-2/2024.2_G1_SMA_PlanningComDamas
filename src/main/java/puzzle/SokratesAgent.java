@@ -34,15 +34,18 @@ import jadex.commons.future.IResultListener;
 import jadex.micro.annotation.Agent;
 
 /**
- *  Puzzle agent tries to solve a solitair board game
+ *  Puzzle agent tries to solve a checkers game
  *  by recursiveky applying means-end-reasoning.
  */
 @Agent(type=BDIAgentFactory.TYPE)
 @BDIConfigurations(
-{
-	@BDIConfiguration(name=MoveComparator.STRATEGY_MAX_CAPTURES),	// Best strategy first.
-	@BDIConfiguration(name=MoveComparator.STRATEGY_NONE),
-	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_QUEENS)
+{	
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_CAPTURES), // Best strategy first.
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_QUEENS),
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_QUEENS_THAN_PREFER_CAPTURES),
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_NO_QUEENS_THAN_PREFER_CAPTURES),
+	@BDIConfiguration(name=MoveComparator.STRATEGY_PREFER_NO_QUEENS), 
+	@BDIConfiguration(name=MoveComparator.STRATEGY_NONE)
 })
 public class SokratesAgent
 {
@@ -62,11 +65,10 @@ public class SokratesAgent
 	/** The delay between two moves (in milliseconds). */
 	protected long delay	= 800;
 	
-	/** The strategy (none=choose the first applicable, long=prefer jump moves,
-	 * same_long=prefer long moves of same color, alter_long=prefer long move of alternate color). */
-	protected String strategy; // = MoveComparator.STRATEGY_SAME_LONG;
+	/** The strategy */
+	protected String strategy; // = MoveComparator.STRATEGY_PREFER_CAPTURES;
 	
-	protected int playerColorPiece;
+	protected int playerPieceColor;
 
 	//-------- methods --------
 	
@@ -77,14 +79,16 @@ public class SokratesAgent
 	@OnStart
 	public IFuture<Void>	body(IInternalAccess agent)
 	{
+		// Agent select it's color to play
+		this.playerPieceColor = board.getPlayerPieceColor();
+
 		final Future<Void>	ret	= new Future<Void>();
-		this.playerColorPiece = board.getPlayerColorPiece();
 		strategy = agent.getConfiguration();
 		print("strategy is: "+strategy);
 		Random rand = new Random();
 		this.delay = delay + rand.nextInt(500);
 		print(this.delay + " delay");
-		if (this.playerColorPiece == 1) {
+		if (this.playerPieceColor == 1) {
 			createGui(agent);
 		}
 
@@ -149,7 +153,7 @@ public class SokratesAgent
 		public List<MovePlan> buildAPL()
 		{
 			List<MovePlan>	ret	= new ArrayList<MovePlan>();
-			List<Move>	moves	= board.getPossibleMoves(playerColorPiece);
+			List<Move>	moves	= board.getPossibleMoves(playerPieceColor);
 			print("Possible moves: "+moves);
 			Collections.sort(moves, new MoveComparator(board, strategy));
 			
@@ -283,7 +287,7 @@ public class SokratesAgent
     {
         for(int x=0; x<indent; x++)
             System.out.print(" ");
-        System.out.println(playerColorPiece+" "+text);
+        System.out.println(playerPieceColor+" "+text);
     }
 
 	protected void print(String text)

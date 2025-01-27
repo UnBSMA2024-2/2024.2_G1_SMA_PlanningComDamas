@@ -80,7 +80,7 @@ public class Board implements IBoard, Serializable
 		}
 	}
 
-	public int getPlayerColorPiece(){
+	public int getPlayerPieceColor(){
 		if(isWhiteTurn) {
 			isWhiteTurn = false;
 			return 1;
