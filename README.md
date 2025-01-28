@@ -121,6 +121,10 @@ gradle build && gradle run
 
 Após isso, o programa irá inicar uma interface gráfica com o Jadex Control Center e outra interface gráfica com o jogo de damas.
 
+## Artigo
+
+[Arquivo do artigo](./assets/artigo.pdf)
+
 ## Vídeo
 
 <video src='./assets/gravacao.mp4'></video>
