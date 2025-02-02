@@ -131,7 +131,7 @@ Após isso, o programa irá inicar uma interface gráfica com o Jadex Control Ce
 
 <video src='./assets/gravacao.mp4'></video>
 
-[Arquivo de apresentação](./assets/gravacao.mp4)
+[Arquivo de apresentação inicial](./assets/gravacao.mp4)
 
 ### Apresentação da versão final
 
